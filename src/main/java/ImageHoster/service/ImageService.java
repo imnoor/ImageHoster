@@ -5,8 +5,6 @@ import ImageHoster.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -26,9 +24,9 @@ public class ImageService {
     }
 
 
-    //The method calls the getImageByTitle() method in the Repository and passes the title of the image to be fetched
-    public Image getImageByTitle(String title) {
-        return imageRepository.getImageByTitle(title);
+    //The method calls the getImageById() method in the Repository and passes the title of the image to be fetched
+    public Image getImageById(Integer imageId) {
+        return imageRepository.getImage(imageId);
     }
 
     //The method calls the getImage() method in the Repository and passes the id of the image to be fetched
