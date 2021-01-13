@@ -97,7 +97,7 @@ public class ImageController {
         String error = "Only the owner of the image can edit the image";
         Image image = imageService.getImage(imageId);
         //check if the owners of the picture is same as logged in user as per sesson
-        if ( image.getUser().getUsername() ==  ((User)session.getAttribute("loggeduser")).getUsername() ) {
+        if ( isSameUser(image,session) ) {
             String tags = convertTagsToString(image.getTags());
             model.addAttribute("image", image);
             model.addAttribute("tags", tags);
@@ -108,6 +108,11 @@ public class ImageController {
             model.addAttribute("tags", image.getTags());
             return "images/image";
         }
+    }
+
+    //check if the owners of the picture is same as logged in user as per sesson
+    private boolean isSameUser(Image image, HttpSession session){
+        return image.getUser().getUsername().equals(((User)session.getAttribute("loggeduser")).getUsername());
     }
 
     //This controller method is called when the request pattern is of type 'images/edit' and also the incoming request is of PUT type
@@ -155,14 +160,14 @@ public class ImageController {
             String error = "Only the owner of the image can delete the image";
             Image image = imageService.getImage(imageId);
             //check if the owners of the picture is same as logged in user as per sesson
-            if ( image.getUser().getUsername() ==  ((User)session.getAttribute("loggeduser")).getUsername() ) {
+            if ( isSameUser(image,session) ) {
                 imageService.deleteImage(imageId);
-                return "redirect:/images";
+                return "images";
             } else {
                 model.addAttribute("deleteError", error);
                 model.addAttribute("image", image);
                 model.addAttribute("tags", image.getTags());
-                return "redirect:/images/image";
+                return "images/image";
             }
 
     }
