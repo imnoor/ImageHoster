@@ -18,3 +18,10 @@ $ git commit -m "Some relevant comment"
 $ git push -u origin main
 ```
 
+if local rep is screwed for some reason and would like to do a clean pull from remote
+```
+$ git clean -f
+$ git fetch --all
+
+```
+
