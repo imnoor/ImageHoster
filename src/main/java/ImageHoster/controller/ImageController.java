@@ -127,7 +127,7 @@ public class ImageController {
     //The method also receives tags parameter which is a string of all the tags separated by a comma using the annotation @RequestParam
     //The method converts the string to a list of all the tags using findOrCreateTags() method and sets the tags attribute of an image as a list of all the tags
     @RequestMapping(value = "/editImage", method = RequestMethod.PUT)
-    public String editImageSubmit(@RequestParam("file") MultipartFile file, @RequestParam("imageId") Integer imageId, @RequestParam("tags") String tags, Image updatedImage, HttpSession session) throws IOException {
+    public String editImageSubmit(@RequestParam("file") MultipartFile file, @RequestParam(name = "imageId") Integer imageId, @RequestParam("tags") String tags, Image updatedImage, HttpSession session) throws IOException {
 
         Image image = imageService.getImage(imageId);
         String updatedImageData = convertUploadedFileToBase64(file);
@@ -146,7 +146,8 @@ public class ImageController {
         updatedImage.setDate(new Date());
 
         imageService.updateImage(updatedImage);
-        return "redirect:/images/" + updatedImage.getTitle();
+        //changed from title to id.
+        return "redirect:/images/" + updatedImage.getId();
     }
 
 
@@ -162,7 +163,7 @@ public class ImageController {
             //check if the owners of the picture is same as logged in user as per sesson
             if ( isSameUser(image,session) ) {
                 imageService.deleteImage(imageId);
-                return "images";
+                return "redirect:images";
             } else {
                 model.addAttribute("deleteError", error);
                 model.addAttribute("image", image);

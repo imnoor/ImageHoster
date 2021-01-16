@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import java.util.regex.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -40,9 +41,32 @@ public class UserController {
     //This controller method is called when the request pattern is of type 'users/registration' and also the incoming request is of POST type
     //This method calls the business logic and after the user record is persisted in the database, directs to login page
     @RequestMapping(value = "users/registration", method = RequestMethod.POST)
-    public String registerUser(User user) {
-        userService.registerUser(user);
-        return "redirect:/users/login";
+    public String registerUser(User user, Model model) {
+        String pwd = user.getPassword();
+
+        // User a regular expression to check if Password contain atleast 1 alphabet, 1 number & 1 special character
+        String regex = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+])";
+
+        // Create a pattern from regex
+        Pattern pattern
+                = Pattern.compile(regex);
+        Matcher matcher
+                = pattern
+                .matcher(pwd);
+        System.out.println();
+        if (matcher.lookingAt() ) {
+            // if pattern matches then save user
+            userService.registerUser(user);
+            return "redirect:/users/login";
+        } else {
+            // if pattern doesnt match then show error on registration page
+            String error = "Password must contain atleast 1 alphabet, 1 number & 1 special character";
+            model.addAttribute("passwordTypeError", error);
+            model.addAttribute("User", user);
+            return "users/registration";
+
+        }
+
     }
 
     //This controller method is called when the request pattern is of type 'users/login'
