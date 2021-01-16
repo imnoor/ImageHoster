@@ -1,6 +1,7 @@
 package ImageHoster.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 //@Entity annotation specifies that the corresponding class is a JPA entity
 @Entity
@@ -22,7 +23,7 @@ public class Comment {
     private String text;
 
     @Column(name = "crated_date")
-    private String cratedDate;
+    private Date cratedDate;
 
     //The 'comments' table is mapped to 'users' table with Many:One mapping
     //One comment can have only one user (owner) but one user can have multiple comments
@@ -36,7 +37,7 @@ public class Comment {
     //FetchType is EAGER
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "image_id")
-    private Image img;
+    private Image image;
 
 
     public Integer getId() {
@@ -55,11 +56,11 @@ public class Comment {
         this.text = text;
     }
 
-    public String getCratedDate() {
+    public Date getCratedDate() {
         return cratedDate;
     }
 
-    public void setCratedDate(String cratedDate) {
+    public void setCratedDate(Date cratedDate) {
         this.cratedDate = cratedDate;
     }
 
@@ -71,12 +72,12 @@ public class Comment {
         this.user = user;
     }
 
-    public Image getImg() {
-        return img;
+    public Image getImage() {
+        return image;
     }
 
-    public void setImg(Image img) {
-        this.img = img;
+    public void setImage(Image img) {
+        this.image = img;
     }
 
     public Comment() {

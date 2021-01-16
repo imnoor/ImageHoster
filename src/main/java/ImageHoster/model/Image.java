@@ -51,6 +51,20 @@ public class Image {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Tag> tags = new ArrayList<>();
 
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    //Lets map back the relationship for comments
+    // Enables more cleaner fetching of comments on an image
+    // Enables removal of comments on the image when image is deleted.
+    @OneToMany(mappedBy = "image", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Comment> comments= new ArrayList<>();
+
     public Image() {
     }
 
