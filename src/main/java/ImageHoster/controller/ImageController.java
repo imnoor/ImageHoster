@@ -150,7 +150,7 @@ public class ImageController {
 
         imageService.updateImage(updatedImage);
         //changed from title to id for bug fix
-        return "redirect:/images/" + updatedImage.getId();
+        return "redirect:/images/" + updatedImage.getId() + "/" + updatedImage.getTitle();
     }
 
 
@@ -213,8 +213,11 @@ public class ImageController {
             tagString.append(tags.get(i).getName()).append(",");
         }
 
-        Tag lastTag = tags.get(tags.size() - 1);
-        tagString.append(lastTag.getName());
+        //fix cases where there are no Tags.
+        if (tags.size() > 1) {
+            Tag lastTag = tags.get(tags.size() - 1);
+            tagString.append(lastTag.getName());
+        }
 
         return tagString.toString();
     }
