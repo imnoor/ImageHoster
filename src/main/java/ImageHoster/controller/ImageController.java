@@ -1,10 +1,8 @@
 package ImageHoster.controller;
 
-import ImageHoster.model.Comment;
 import ImageHoster.model.Image;
 import ImageHoster.model.Tag;
 import ImageHoster.model.User;
-import ImageHoster.service.CommentService;
 import ImageHoster.service.ImageService;
 import ImageHoster.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
-import javax.websocket.server.PathParam;
 import java.io.IOException;
 import java.util.*;
 
@@ -30,8 +27,6 @@ public class ImageController {
     @Autowired
     private TagService tagService;
 
-    @Autowired
-    private CommentService commentService;
 
     //This method displays all the images in the user home page after successful login
     @RequestMapping("images")
@@ -41,21 +36,21 @@ public class ImageController {
         return "images";
     }
 
-    //This method is called when the details of the specific image with corresponding title are to be displayed
-    //The logic is to get the image from the databse with corresponding title. After getting the image from the database the details are shown
-    //First receive the dynamic parameter in the incoming request URL in a string variable 'title' and also the Model type object
-    //Call the getImageByTitle() method in the business logic to fetch all the details of that image
-    //Add the image in the Model type object with 'image' as the key
-    //Return 'images/image.html' file
+    //This was updated to fix the error of having duplicate images with same title.
+    //The function now returns an image based on the requested image id
 
     //Also now you need to add the tags of an image in the Model type object
     //Here a list of tags is added in the Model type object
     //this list is then sent to 'images/image.html' file and the tags are displayed
-    @RequestMapping("/images/{imageId}")
-    public String showImage(@PathVariable("imageId") Integer imageId, Model model) {
+
+
+    @RequestMapping("/images/{imageId}/{title}")
+    public String showImage(@PathVariable("imageId") Integer imageId, @PathVariable("title") String title, Model model) {
         Image image = imageService.getImage(imageId);
         model.addAttribute("image", image);
         model.addAttribute("tags", image.getTags());
+
+        //Include the relevant comments for the image.
         model.addAttribute("comments", image.getComments());
         return "images/image";
     }
@@ -98,7 +93,8 @@ public class ImageController {
 
     //The method first needs to convert the list of all the tags to a string containing all the tags separated by a comma and then add this string in a Model type object
     //This string is then displayed by 'edit.html' file as previous tags of an image
-    //Update paramaters to include HttpSession to pass the session object
+    //Update paramaters to include HttpSession to pass the session object for identifying the user from session
+    //Code updated to ensure only the uploaded of the image can edit the image.
     @RequestMapping(value = "/editImage")
     public String editImage(@RequestParam("imageId") Integer imageId, Model model,HttpSession session) {
         String error = "Only the owner of the image can edit the image";
@@ -119,7 +115,7 @@ public class ImageController {
 
     //check if the owners of the picture is same as logged in user as per sesson
     private boolean isSameUser(Image image, HttpSession session){
-        return image.getUser().getUsername().equals(((User)session.getAttribute("loggeduser")).getUsername());
+        return image.getUser().getId()== ((User)session.getAttribute("loggeduser")).getId();
     }
 
     //This controller method is called when the request pattern is of type 'images/edit' and also the incoming request is of PUT type
@@ -153,7 +149,7 @@ public class ImageController {
         updatedImage.setDate(new Date());
 
         imageService.updateImage(updatedImage);
-        //changed from title to id.
+        //changed from title to id for bug fix
         return "redirect:/images/" + updatedImage.getId();
     }
 
@@ -170,7 +166,7 @@ public class ImageController {
             //check if the owners of the picture is same as logged in user as per sesson
             if ( isSameUser(image,session) ) {
                 imageService.deleteImage(imageId);
-                return "redirect:images";
+                return "redirect:/images";
             } else {
                 model.addAttribute("deleteError", error);
                 model.addAttribute("image", image);
@@ -191,7 +187,7 @@ public class ImageController {
     //After adding all tags to a list, the list is returned
     private List<Tag> findOrCreateTags(String tagNames) {
         StringTokenizer st = new StringTokenizer(tagNames, ",");
-        List<Tag> tags = new ArrayList<Tag>();
+        List<Tag> tags = new ArrayList<>();
 
         while (st.hasMoreTokens()) {
             String tagName = st.nextToken().trim();

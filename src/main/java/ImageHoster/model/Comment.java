@@ -22,8 +22,8 @@ public class Comment {
     @Column(name = "text")
     private String text;
 
-    @Column(name = "crated_date")
-    private Date cratedDate;
+    @Column(name = "created_date")
+    private Date createdDate;
 
     //The 'comments' table is mapped to 'users' table with Many:One mapping
     //One comment can have only one user (owner) but one user can have multiple comments
@@ -56,12 +56,12 @@ public class Comment {
         this.text = text;
     }
 
-    public Date getCratedDate() {
-        return cratedDate;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCratedDate(Date cratedDate) {
-        this.cratedDate = cratedDate;
+    public void setCreatedDate(Date cratedDate) {
+        this.createdDate = cratedDate;
     }
 
     public User getUser() {

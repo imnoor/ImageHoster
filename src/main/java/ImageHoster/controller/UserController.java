@@ -57,7 +57,7 @@ public class UserController {
         if (matcher.lookingAt() ) {
             // if pattern matches then save user
             userService.registerUser(user);
-            return "redirect:/users/login";
+            return "users/login";
         } else {
             // if pattern doesnt match then show error on registration page
             String error = "Password must contain atleast 1 alphabet, 1 number & 1 special character";
